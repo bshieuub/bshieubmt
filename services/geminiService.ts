@@ -1,18 +1,21 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY;
 
 if (!API_KEY) {
-  // A real-world app would handle this more gracefully
-  console.error("API_KEY environment variable not set.");
+  console.warn("GEMINI_API_KEY environment variable not set. AI features will be disabled.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
+const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 export const askAI = async (question: string): Promise<string> => {
   if (!question.trim()) {
     return "Vui lòng nhập câu hỏi của bạn.";
+  }
+  
+  if (!ai) {
+    return "Tính năng AI tạm thời không khả dụng. Vui lòng liên hệ Bác sĩ Từ Ngọc Hiếu để được tư vấn trực tiếp.";
   }
   
   try {
@@ -43,6 +46,10 @@ export const askAI = async (question: string): Promise<string> => {
 export const generateBlogContent = async (prompt: string, type: 'title' | 'excerpt' | 'content'): Promise<string> => {
   if (!prompt.trim()) {
     return "Vui lòng nhập yêu cầu cho AI.";
+  }
+  
+  if (!ai) {
+    return "Tính năng AI tạm thời không khả dụng. Vui lòng viết nội dung thủ công.";
   }
   
   try {
@@ -115,6 +122,16 @@ export const generateBlogContent = async (prompt: string, type: 'title' | 'excer
 };
 
 export const generateBlogIdeas = async (): Promise<string[]> => {
+  if (!ai) {
+    return [
+      "Dấu hiệu cảnh báo sớm của ung thư vú",
+      "Chế độ dinh dưỡng cho bệnh nhân ung thư",
+      "Tầm quan trọng của tầm soát ung thư định kỳ",
+      "Cách chăm sóc tinh thần cho bệnh nhân ung thư",
+      "Phòng ngừa ung thư qua lối sống lành mạnh"
+    ];
+  }
+  
   try {
     const systemInstruction = `
       Bạn là một chuyên gia nội dung y khoa về ung bướu.
