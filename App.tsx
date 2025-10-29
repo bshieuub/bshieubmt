@@ -1,5 +1,6 @@
 
 import React, { useState, useRef } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import AboutSection from './components/AboutSection';
@@ -12,16 +13,20 @@ import TestimonialsSection from './components/TestimonialsSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import AppointmentModal from './components/AppointmentModal';
+import LoginModal from './components/LoginModal';
+import ProtectedRoute from './components/ProtectedRoute';
 import { BlogPost } from './types';
 
 type ViewMode = 'home' | 'blog' | 'blog-detail' | 'blog-admin';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState<ViewMode>('home');
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [isAdminMode, setIsAdminMode] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
 
   const sections = {
     home: useRef<HTMLDivElement>(null),
@@ -85,7 +90,17 @@ const App: React.FC = () => {
   };
 
   const toggleAdminMode = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
     setIsAdminMode(!isAdminMode);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsAdminMode(false);
+    setCurrentView('home');
   };
 
   const renderContent = () => {
@@ -116,11 +131,13 @@ const App: React.FC = () => {
       
       case 'blog-admin':
         return (
-          <BlogAdmin
-            onSave={handleSavePost}
-            onClose={() => setCurrentView('blog')}
-            editingPost={editingPost}
-          />
+          <ProtectedRoute>
+            <BlogAdmin
+              onSave={handleSavePost}
+              onClose={() => setCurrentView('blog')}
+              editingPost={editingPost}
+            />
+          </ProtectedRoute>
         );
       
       default:
@@ -153,8 +170,15 @@ const App: React.FC = () => {
     <div className="bg-light font-sans text-dark min-h-screen">
       <Header onNavigate={scrollToSection} onOpenModal={openModal} />
       
-      {/* Admin Toggle */}
-      <div className="fixed top-16 md:top-20 right-2 md:right-4 z-40">
+      {/* Admin Controls */}
+      <div className="fixed top-16 md:top-20 right-2 md:right-4 z-40 flex gap-2">
+        {isAuthenticated && (
+          <div className="bg-white rounded-lg shadow-lg px-3 py-2 text-sm">
+            <span className="text-gray-600">Xin chào, </span>
+            <span className="font-semibold text-primary">{user?.name}</span>
+          </div>
+        )}
+        
         <button
           onClick={toggleAdminMode}
           className={`px-3 py-2 md:px-4 rounded-lg font-semibold transition-all shadow-lg text-sm md:text-base ${
@@ -170,6 +194,17 @@ const App: React.FC = () => {
             {isAdminMode ? 'Thoát' : 'Admin'}
           </span>
         </button>
+
+        {isAuthenticated && (
+          <button
+            onClick={handleLogout}
+            className="px-3 py-2 md:px-4 rounded-lg font-semibold transition-all shadow-lg text-sm md:text-base bg-red-500 text-white hover:bg-red-600"
+            title="Đăng xuất"
+          >
+            <span className="hidden sm:inline">Đăng xuất</span>
+            <span className="sm:hidden">X</span>
+          </button>
+        )}
       </div>
 
       <main>
@@ -178,7 +213,16 @@ const App: React.FC = () => {
       
       {currentView === 'home' && <Footer />}
       <AppointmentModal isOpen={isModalOpen} onClose={closeModal} />
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 
