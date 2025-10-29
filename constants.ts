@@ -14,6 +14,7 @@ export const NAV_LINKS = [
   { name: 'Trang chủ', section: 'home' },
   { name: 'Giới thiệu', section: 'about' },
   { name: 'Dịch vụ', section: 'services' },
+  { name: 'Blog', section: 'blog' },
   { name: 'Hỏi đáp AI', section: 'knowledge' },
   { name: 'Bệnh nhân', section: 'testimonials' },
   { name: 'Liên hệ', section: 'contact' },

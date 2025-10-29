@@ -22,10 +22,10 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenModal }) => {
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : 'bg-transparent'}`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16 md:h-20">
           <div className="flex-shrink-0 cursor-pointer" onClick={() => onNavigate('home')}>
-            <span className="text-xl font-bold text-primary">BS. TỪ NGỌC HIẾU</span>
-            <span className="block text-sm text-secondary -mt-1">Chuyên khoa Ung bướu</span>
+            <span className="text-lg md:text-xl font-bold text-primary">BS. TỪ NGỌC HIẾU</span>
+            <span className="block text-xs md:text-sm text-secondary -mt-1">Chuyên khoa Ung bướu</span>
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">
@@ -42,8 +42,11 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenModal }) => {
             </button>
           </div>
 
-          <div className="md:hidden">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-primary">
+          <div className="md:hidden flex items-center gap-2">
+            <button onClick={onOpenModal} className="px-3 py-1.5 bg-accent text-primary font-semibold rounded-full text-sm hover:bg-yellow-400 transition-all">
+              Đặt lịch
+            </button>
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-primary p-1">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
             </button>
           </div>
