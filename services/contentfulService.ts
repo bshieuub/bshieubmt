@@ -1,10 +1,12 @@
 import * as contentful from 'contentful';
 import { BlogPost } from '../types';
 
-const client = contentful.createClient({ // This is the space ID. A space is like a project folder in Contentful terms
-  space: '91sdcuei7aq7', // <-- BẠN CẦN THAY THẾ GIÁ TRỊ NÀY
-  // This is the access token for this space.
-  accessToken: 'W8wl1gZ740eJmnhds7yQ6yvqnGT8CZUU5IcT3RmlU-k', // <-- BẠN CẦN THAY THẾ GIÁ TRỊ NÀY
+const SPACE_ID = import.meta.env.VITE_CONTENTFUL_SPACE_ID || '91sdcuei7aq7';
+const ACCESS_TOKEN = import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN || 'W8wl1gZ740eJmnhds7yQ6yvqnGT8CZUU5IcT3RmlU-k';
+
+const client = contentful.createClient({
+  space: SPACE_ID,
+  accessToken: ACCESS_TOKEN,
 });
 
 // Helper function to process the raw response from Contentful
